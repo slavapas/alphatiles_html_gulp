@@ -1,2 +1,2 @@
 //
-console.log('Hi');;
+console.log('Main JS file loading');

@@ -44,7 +44,7 @@ function assets() {
 
 // Concat SASS
 function css() {
-  return src('dist/css/*.css')
+  return src('src/css/*.css')
     .pipe(concat('style.css'))   
     .pipe(dest('dist/'))
   }
@@ -58,12 +58,12 @@ var jsSRC = [
 ];
 
 function javascript() {
-  return src('src/js/*.js')  
+  return src(jsSRC)  
   .pipe(concat('script.js'))
   // .on('error', concat.logError)
   .pipe(uglify())
   .pipe(lineec())
-  .pipe(dest('dist/js/'));
+  .pipe(dest('dist/'));
 }
 // ---------------
 

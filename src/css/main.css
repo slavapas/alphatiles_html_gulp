@@ -23,6 +23,7 @@ p {
 .main-menu_tel {
   font-size: 1.5em;
   -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
   -ms-flex-pack: end;
   justify-content: flex-end;
   margin: 10px; }
@@ -30,9 +31,11 @@ p {
 .main-menu_tabs {
   font-size: 0.8em;
   -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
   -ms-flex-pack: end;
   justify-content: flex-end;
   text-transform: uppercase;
   font-weight: bold; }
   .main-menu_tabs a:hover {
-    color: #8BB22E; }
+    color: #8BB22E;
+    list-style-type: none; }
