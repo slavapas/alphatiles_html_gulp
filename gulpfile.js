@@ -7,10 +7,11 @@ const notify = require('gulp-notify')
 const uglify = require('gulp-uglify')
 const lineec = require('gulp-line-ending-corrector')
 const autoprefixer = require('gulp-autoprefixer')
+const copy   = require('gulp-copy')
 const browserSync = require('browser-sync').create()
 
 
-// Compile PUG files into HTML
+// 1. Compile PUG files into HTML
 function html() {
   return src('src/pug/*.pug')
     .pipe(pug({
@@ -21,7 +22,7 @@ function html() {
 }
 
 
-// Compile SASS files into CSS
+// 2. Compile SASS files into CSS
 function styles() {
   return src('src/sass/main.sass')
     .pipe(sass({
@@ -36,13 +37,20 @@ function styles() {
     .pipe(browserSync.stream())
 }
 
-// Copy assets
+// 3. Copy assets
 function assets() {
   return src('src/assets/**/*')
-    .pipe(dest('dist/'))
+    .pipe(dest('./dist/'))    
 }
 
-// Copy Font Awesome
+
+// 3b. Copy css
+function copyCSS() {
+  return src('src/css/*.css')
+    .pipe(dest('./dist/css'))
+}
+
+// 4. Copy Font Awesome
 function fonts(){
   return src([
      'node_modules/@fortawesome/fontawesome-free/webfonts/**/*',        
@@ -50,14 +58,23 @@ function fonts(){
     .pipe(dest('./dist/webfonts'))
 }
 
+// 5. Concat CSS
+// Used to concat the files in a specific order.
+var cssSRC = [
+  'dist/css/fontawesome-all.css',
+  'dist/css/bootstrap.min.css',
+  'dist/css/main.css'
+];
+
 // Concat SASS
-function css() {
-  return src('src/css/*.css')
+function concatCSS() {
+  return src(cssSRC)
     .pipe(concat('style.css'))   
     .pipe(dest('dist/'))
+    .pipe(browserSync.stream())
   }
 
-// Concat JS
+// 6. Concat JS
 // Used to concat the files in a specific order.
 var jsSRC = [
   'src/js/jquery-3.3.1.min.js',
@@ -71,19 +88,21 @@ function javascript() {
   // .on('error', concat.logError)
   .pipe(uglify())
   .pipe(lineec())
-  .pipe(dest('dist/'));
+  .pipe(dest('dist/'))
+  .pipe(browserSync.stream())
 }
 // ---------------
 
 
-// Serve and watch sass/pug files for changes
+// 7. Serve and watch sass/pug files for changes
 function watchAndServe() {
   browserSync.init({
     server: 'dist',
   })
   watch('src/sass/**/*.sass', styles)
   watch('src/js/*.js', javascript)
-  watch('dist/css/*.css', css)
+  watch('src/css/**/*', copyCSS)
+  watch('src/css*.css', concatCSS)
   watch('src/pug/**/*.pug', html)
   watch('src/assets/**/*', assets)
   watch('dist/*.html').on('change', browserSync.reload)
@@ -92,5 +111,7 @@ function watchAndServe() {
 
 exports.html = html
 exports.styles = styles
+// exports.copyCSS = copyCSS
+// exports.concatCSS = concatCSS
 exports.watch = watchAndServe
-exports.default = series(html, styles, assets, fonts, javascript, watchAndServe)
+exports.default = series(html, styles, concatCSS, assets, fonts, javascript, watchAndServe)
