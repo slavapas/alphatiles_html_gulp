@@ -42,6 +42,14 @@ function assets() {
     .pipe(dest('dist/'))
 }
 
+// Copy Font Awesome
+function fonts(){
+  return src([
+     'node_modules/@fortawesome/fontawesome-free/webfonts/**/*',        
+    ])
+    .pipe(dest('./dist/webfonts'))
+}
+
 // Concat SASS
 function css() {
   return src('src/css/*.css')
@@ -85,4 +93,4 @@ function watchAndServe() {
 exports.html = html
 exports.styles = styles
 exports.watch = watchAndServe
-exports.default = series(html, styles, assets, watchAndServe)
+exports.default = series(html, styles, assets, fonts, javascript, watchAndServe)
